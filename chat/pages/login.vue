@@ -4,7 +4,7 @@
       <div class="w-full border-b pb-2 mb-10">
         <p class="text-center">ログイン</p>
       </div>
-      <form class="w-full">
+      <form class="w-full" @submit.prevent="onSubmit">
         <button
           type="submit"
           class="w-full bg-google py-3 px-10 text-white rounded focus:outline-none focus:shadow-outline border"
@@ -13,3 +13,14 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  middleware: ["checkLogin"],
+  methods: {
+    onSubmit() {
+      const provider = new this.$firebase.auth.GoogleAuthProvider();
+      this.$fireAuth.signInWithRedirect(provider);
+    }
+  }
+};
+</script>
