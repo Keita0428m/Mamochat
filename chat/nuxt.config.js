@@ -35,7 +35,8 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: ['~/plugins/firebase',
-    '~/plugins/auth',],
+    '~/plugins/auth',
+    '~/plugins/user'],
   /*
   ** Auto import components
   ** See https://nuxtjs.org/api/configuration-components
