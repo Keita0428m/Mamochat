@@ -54,6 +54,8 @@
   </div>
 </template>
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   data() {
     return {
@@ -72,7 +74,15 @@ export default {
     };
   },
 
+  computed: {
+    isValidateError() {
+      return this.form.name.errorMessage || this.form.imageUrl.errorMessage;
+    }
+  },
+
   methods: {
+    ...mapMutations("alert", ["setMessage"]),
+
     selectImage() {
       this.$refs.image.click();
     },
@@ -89,6 +99,7 @@ export default {
         });
       });
     },
+
     async upload({ localImageFile }) {
       const user = await this.$auth();
 
@@ -137,9 +148,25 @@ export default {
       imageUrl.errorMessage = null;
     },
 
-    onSubmit() {
+    async onSubmit() {
+      const user = await this.$auth();
+      // 未ログインの場合
+      if (!user) this.$router.push("/login");
       this.validateName();
       this.validateImageUrl();
+      if (this.isValidateError) return;
+      try {
+        await this.$firestore
+          .collection("users")
+          .doc(user.uid)
+          .set({
+            name: this.form.name.val,
+            iconImageUrl: this.form.imageUrl.val
+          });
+        this.$router.push("/");
+      } catch (e) {
+        this.setMessage({ message: "登録に失敗しました。" });
+      }
     }
   }
 };
